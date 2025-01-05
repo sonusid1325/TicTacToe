@@ -68,6 +68,7 @@ fun Home() {
 
 @Composable
 fun TicTacToeGame() {
+    // Mutable state to hold the game board
     var board by remember { mutableStateOf(Array(3) { arrayOfNulls<String>(3) }) }
     var currentPlayer by remember { mutableStateOf("X") }
     var winner by remember { mutableStateOf<String?>(null) }
@@ -82,10 +83,16 @@ fun TicTacToeGame() {
             Row {
                 repeat(3) { col ->
                     TicTacToeCell(
-                        value = board[row][col],
-                        enabled = !gameOver && (board[row][col] == null),
+                        value = board[row][col], // Pass the cell's value
+                        enabled = !gameOver && (board[row][col] == null), // Allow click only if game isn't over and cell is empty
                         onClick = {
-                            board[row][col] = currentPlayer
+                            // Update board and check for winner
+                            board = board.mapIndexed { r, rowArray ->
+                                rowArray.mapIndexed { c, cell ->
+                                    if (r == row && c == col) currentPlayer else cell
+                                }.toTypedArray()
+                            }.toTypedArray()
+
                             if (checkWinner(board, currentPlayer)) {
                                 winner = currentPlayer
                                 gameOver = true
@@ -118,10 +125,10 @@ fun TicTacToeGame() {
         // Reset Button
         Button(
             onClick = {
-                Array(3) { arrayOfNulls<String>(3) }.also { board = it }
-                "X".also { it.also { currentPlayer = it } }
-                null.also { it.also { winner = it } }
-                false.also { it.also { gameOver = it } }
+                board = Array(3) { arrayOfNulls<String>(3) }
+                currentPlayer = "X"
+                winner = null
+                gameOver = false
             },
             modifier = Modifier.padding(top = 16.dp)
         ) {
@@ -129,6 +136,7 @@ fun TicTacToeGame() {
         }
     }
 }
+
 
 @Composable
 fun TicTacToeCell(value: String?, enabled: Boolean, onClick: () -> Unit) {
