@@ -1,6 +1,7 @@
 package com.sonusid.tictactoe
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -9,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,16 +36,27 @@ fun Home() {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
+                        .padding(horizontal = 20.dp)
                 ) {
                     Text("Player X", fontWeight = FontWeight.Bold)
                     Text("Player O", fontWeight = FontWeight.Bold)
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(1.dp))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                ) {
+                    Text("0", fontWeight = FontWeight.Bold)
+                    Text("0", fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.height(5.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp),
+                        .padding(horizontal = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     TicTacToeGame()
@@ -70,7 +83,7 @@ fun TicTacToeGame() {
                 repeat(3) { col ->
                     TicTacToeCell(
                         value = board[row][col],
-                        enabled = !gameOver && board[row][col] == null,
+                        enabled = !gameOver && (board[row][col] == null),
                         onClick = {
                             board[row][col] = currentPlayer
                             if (checkWinner(board, currentPlayer)) {
@@ -106,9 +119,9 @@ fun TicTacToeGame() {
         Button(
             onClick = {
                 Array(3) { arrayOfNulls<String>(3) }.also { board = it }
-                "X".also { currentPlayer = it }
-                null.also { winner = it }
-                false.also { gameOver = it }
+                "X".also { it.also { currentPlayer = it } }
+                null.also { it.also { winner = it } }
+                false.also { it.also { gameOver = it } }
             },
             modifier = Modifier.padding(top = 16.dp)
         ) {
@@ -122,11 +135,12 @@ fun TicTacToeCell(value: String?, enabled: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(100.dp)
-            .background(
-                color = if (enabled) Color.LightGray else Color.Gray,
-                shape = CircleShape
-            )
             .padding(8.dp)
+            .border(
+                width = 2.dp,
+                color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                shape = RectangleShape
+            )
             .clickable(enabled) { onClick() },
         contentAlignment = Alignment.Center
     ) {
