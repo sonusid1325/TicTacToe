@@ -31,28 +31,6 @@ fun Home() {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                ) {
-                    Text("Player X", fontWeight = FontWeight.Bold)
-                    Text("Player O", fontWeight = FontWeight.Bold)
-                }
-                Spacer(modifier = Modifier.height(1.dp))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                ) {
-                    Text("0", fontWeight = FontWeight.Bold)
-                    Text("0", fontWeight = FontWeight.Bold)
-                }
-                Spacer(modifier = Modifier.height(5.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -68,16 +46,44 @@ fun Home() {
 
 @Composable
 fun TicTacToeGame() {
-    // Mutable state to hold the game board
+    // Mutable state for game board and variables
     var board by remember { mutableStateOf(Array(3) { arrayOfNulls<String>(3) }) }
     var currentPlayer by remember { mutableStateOf("X") }
     var winner by remember { mutableStateOf<String?>(null) }
     var gameOver by remember { mutableStateOf(false) }
+    var playerXScore by remember { mutableStateOf(0) }
+    var playerOScore by remember { mutableStateOf(0) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Display player scores
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Text("Player X", fontWeight = FontWeight.Bold)
+            Text("Player O", fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Text("$playerXScore", fontWeight = FontWeight.Bold)
+            Text("$playerOScore", fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Game Grid
         repeat(3) { row ->
             Row {
@@ -96,6 +102,11 @@ fun TicTacToeGame() {
                             if (checkWinner(board, currentPlayer)) {
                                 winner = currentPlayer
                                 gameOver = true
+                                if (currentPlayer == "X") {
+                                    playerXScore++ // Increment Player X score
+                                } else {
+                                    playerOScore++ // Increment Player O score
+                                }
                             } else if (board.flatten().none { it == null }) {
                                 winner = "Draw"
                                 gameOver = true
@@ -136,6 +147,7 @@ fun TicTacToeGame() {
         }
     }
 }
+
 
 
 @Composable
